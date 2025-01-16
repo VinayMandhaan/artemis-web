@@ -4,6 +4,8 @@ import Block from "./components/Block";
 import { useEffect, useState } from "react";
 export default function Home() {
   const [data, setNewData] = useState([])
+  const [selectedItems, setSelectedItems] = useState([])
+
   
   const getData = async () => {
     try {
@@ -23,7 +25,7 @@ export default function Home() {
     <main className={styles.container}>
       <div className={styles.main}>
         {data?.length > 0 ? data.map((block, index) => (
-          <Block key={index} {...block} />
+          <Block key={index} {...block} selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
         )) : (
           <div>
             <span>No Data Available</span>

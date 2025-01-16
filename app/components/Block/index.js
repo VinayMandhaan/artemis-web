@@ -4,28 +4,55 @@ const Block = ({
   description,
   icon,
   onClick,
+  _id,
   disabled = false,
   type = "single",
-  onCheck = (value) => {},
-  selected = false,
-}) => {
-  //const [selected, setSelected] = useState(defaultSelected);
 
-  const handleSelected = () => {
-    //setSelected(!selected);
-    onCheck(selected);
-    onClick();
-  };
+  selectedItems,
+  setSelectedItems,
+}) => {
+  const shouldHideCheckbox = type === "single" && selectedItems?.length > 0 && selectedItems?.some((item) => item._id !== _id)
+  const currentItem = selectedItems?.find((item) => item?._id === _id)
+  const selected = currentItem?.selected
+
+  const selectItem = (item, _id, type) => {
+    let newArr
+    if (type === "single") {
+      const currentItem = selectedItems.find((obj) => obj._id === _id)
+      if (currentItem) {
+        newArr = selectedItems.filter((obj) => obj._id !== _id)
+      } else {
+        newArr = [{ selected: item, _id, type }]
+      }
+    } else {
+      newArr = [...selectedItems]
+      let checkIfSingleExist = newArr?.some((obj) => obj.type === "single")
+      if(checkIfSingleExist) {
+        newArr = newArr.filter((obj) => obj.type !== "single")
+      }
+      const index = newArr.findIndex((obj) => obj._id === _id)
+      if (index !== -1) {
+        newArr.splice(index, 1)
+      } else {
+        newArr.push({ selected: item, _id, type })
+      }
+    }
+    setSelectedItems(newArr)
+  }
 
   return (
     <button
-      className={`${styles.block} ${selected ? styles.active : ""} ${
-        disabled ? styles.disabled : ""
-      }`}
+      className={`${styles.block} ${selected ? styles.active : ""} ${disabled ? styles.disabled : ""}`}
       type="button"
-      onClick={handleSelected}
+      onClick={() => {
+        selectItem(true, _id, type)
+      }}
     >
-      {type == "groupped" && <div className={styles.grouppedCheckbox}>✓</div>}
+      {
+        !shouldHideCheckbox && (
+          selected && <div className={styles.grouppedCheckbox}>✓</div>
+        )
+      }
       <div className={styles.blockIcon}>
         <img src={icon} alt={title} />
       </div>
