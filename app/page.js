@@ -34,7 +34,7 @@ export default function Home() {
       </div>
       {
         data?.length > 0 && (
-          <button className={styles.btnMain}>Submit</button>
+          <button disabled={selectedItems?.length === 0} className={selectedItems?.length === 0 ? styles.btnDisabled : styles.btnMain}>Submit</button>
         )
       }
     </main>
