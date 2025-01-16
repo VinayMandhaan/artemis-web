@@ -1,54 +1,40 @@
 "use client";
 import styles from "./styles.module.scss";
 import Block from "./components/Block";
+import { useEffect, useState } from "react";
 export default function Home() {
-  const data = [
-    {
-      title: "Block 1",
-      description: "FM Companies",
-      type: "groupped",
-      icon: "/icons/ico-org.png",
-      onClick: () => console.log("Block 1 clicked"),
-    },
-    {
-      title: "Academy",
-      type: "groupped",
-      icon: "/icons/ico-academy.png",
-      onClick: () => console.log("Block 2 clicked"),
-    },
-    {
-      title: "Event Companies",
-      description: "Description 3",
-      icon: "/icons/ico-event.png",
-      type: "groupped",
-      onClick: () => console.log("Block 3 clicked"),
-    },
+  const [data, setNewData] = useState([])
+  
+  const getData = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/blocks")
+      const data = await res.json()
+      setNewData(data?.blocks)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
-    {
-      title: "Local Clubs",
-      description: "Description 3",
-      icon: "/icons/ico-local-club.png",
-      type: "single",
-      onClick: () => console.log("Block 3 clicked"),
-    },
-
-    {
-      title: "Community Groups",
-      description: "Description 3",
-      icon: "/icons/ico-org.png",
-      type: "single",
-      onClick: () => console.log("Block 3 clicked"),
-    },
-  ];
+  useEffect(() => {
+    getData()
+  }, [])
 
   return (
     <main className={styles.container}>
       <div className={styles.main}>
-        {data.map((block, index) => (
+        {data?.length > 0 ? data.map((block, index) => (
           <Block key={index} {...block} />
-        ))}
+        )) : (
+          <div>
+            <span>No Data Available</span>
+          </div>
+        )}
       </div>
-      <button className={styles.btnMain}>Submit</button>
+      {
+        data?.length > 0 && (
+          <button className={styles.btnMain}>Submit</button>
+        )
+      }
     </main>
   );
 }
